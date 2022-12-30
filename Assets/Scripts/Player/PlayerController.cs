@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,13 +20,23 @@ namespace Player
         private bool isRunning;
         #endregion
 
+        #region Variables: Attack
+        private const float MIN_COMBO_DELAY_TIME = 0.1f;
+        private const int MAX_COMBO_STEPS = 2;
+        private int currentComboStep;
+        private Coroutine comboAttackResetCoroutine;
+        private bool isAttacking;
+        #endregion
+
         #region Variables: Inputs
         private DefaultInputActions inputActions;
         private InputAction moveAction;
+        private InputAction attackAction;
         #endregion
 
         #region Variables: Animation
         private int animationRunningParameterHash;
+        private int animationAttackComboParameterHash;
         #endregion
 
         void Awake()
@@ -36,6 +47,11 @@ namespace Player
             isRunning = false;
             animationRunningParameterHash = Animator.StringToHash("Running");   //Hash of the running variable
 
+            isAttacking = false;
+            currentComboStep = 0;
+            comboAttackResetCoroutine = null;
+            animationAttackComboParameterHash = Animator.StringToHash("AttackComboStep");
+
             animationTransform = animationController.transform;
         }
 
@@ -43,7 +59,12 @@ namespace Player
         {
             moveAction = inputActions.Player.Move;
             moveAction.Enable();
+
+            attackAction = inputActions.Player.Attack;
+            attackAction.performed += OnAttackAction;
+            attackAction.Enable();
         }
+
 
         private void OnDisable()
         {
@@ -58,6 +79,10 @@ namespace Player
 
         private void MovePlayer()
         {
+            if (isAttacking)
+            {
+                return;
+            }
             playerMovement = moveAction.ReadValue<Vector2>();   //Read Input from InputMapping
             //Debug.Log("X: " + playerMovement.x.ToString() + ", Y: " + playerMovement.y.ToString());
 
@@ -82,6 +107,50 @@ namespace Player
             }
 
             
+        }
+
+        private void OnAttackAction(InputAction.CallbackContext obj)
+        {
+            isAttacking = true;
+
+            if (currentComboStep == MAX_COMBO_STEPS)
+            {
+                return;
+            }
+
+            float animationTime = animationController.GetCurrentAnimatorStateInfo(0).normalizedTime;
+            if ( currentComboStep == 0 || (animationTime >= MIN_COMBO_DELAY_TIME && animationTime <= 0.9f))
+            {
+                if(comboAttackResetCoroutine != null)
+                {
+                    StopCoroutine(comboAttackResetCoroutine);
+                }
+
+                currentComboStep++;
+                animationController.SetBool(animationRunningParameterHash, false);
+                animationController.SetInteger(animationAttackComboParameterHash, currentComboStep);
+
+                comboAttackResetCoroutine = StartCoroutine(ResettingAttackCombo());
+            }
+        }
+
+        private IEnumerator ResettingAttackCombo()
+        {
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForSeconds(animationController.GetAnimatorTransitionInfo(0).duration);
+            yield return new WaitForEndOfFrame();
+            yield return new WaitUntil(() => animationController.GetAnimatorTransitionInfo(0).normalizedTime >= 0.9f);
+
+            currentComboStep = 0;
+            animationController.SetInteger(animationAttackComboParameterHash, currentComboStep);
+            
+            playerMovement = moveAction.ReadValue<Vector2>();
+            if (playerMovement.sqrMagnitude > 0.01f && isRunning)
+            {
+                animationController.SetBool(animationRunningParameterHash, true);
+            }
+            
+            isAttacking = false;
         }
     }
 }
