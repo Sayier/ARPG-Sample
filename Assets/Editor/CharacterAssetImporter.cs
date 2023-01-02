@@ -32,6 +32,8 @@ public class CharacterAssetImporter : AssetPostprocessor
             return false;
         }
 
+        Debug.Log("Importing" + assetPath);
+
         return true;
     }
 

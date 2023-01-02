@@ -119,6 +119,10 @@ namespace Player
             }
 
             float animationTime = animationController.GetCurrentAnimatorStateInfo(0).normalizedTime;
+
+            //Debug.Log("AnimationTime is " + animationTime);
+            //Debug.Log("Current Combo Step is " + currentComboStep);
+
             if ( currentComboStep == 0 || (animationTime >= MIN_COMBO_DELAY_TIME && animationTime <= 0.9f))
             {
                 if(comboAttackResetCoroutine != null)
@@ -136,12 +140,15 @@ namespace Player
 
         private IEnumerator ResettingAttackCombo()
         {
+
             yield return new WaitForEndOfFrame();
             yield return new WaitForSeconds(animationController.GetAnimatorTransitionInfo(0).duration);
             yield return new WaitForEndOfFrame();
             yield return new WaitUntil(() => animationController.GetAnimatorTransitionInfo(0).normalizedTime >= 0.9f);
 
             currentComboStep = 0;
+            //Debug.Log("Combo set to 0");
+
             animationController.SetInteger(animationAttackComboParameterHash, currentComboStep);
             
             playerMovement = moveAction.ReadValue<Vector2>();
