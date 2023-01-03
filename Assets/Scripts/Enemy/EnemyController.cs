@@ -6,14 +6,20 @@ namespace Enemy
 {
     public class EnemyController : MonoBehaviour
     {
-        private float healthPoints = 6f;
+        [SerializeField] private EnemyData enemyData;
 
+        private float currentHealthPoints;
+
+        public void Awake()
+        {
+            currentHealthPoints = enemyData.healthPoints;
+        }
 
         public void TakeDamage(float damageAmount)
         {
-            healthPoints -= damageAmount;
+            currentHealthPoints -= damageAmount;
 
-            if(healthPoints <= 0)
+            if(currentHealthPoints <= 0)
             {
                 Destroy(gameObject);
             }

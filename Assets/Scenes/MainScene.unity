@@ -184,6 +184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4459b6329c864ff4884bd1c5a3e47370, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerData: {fileID: 11400000, guid: 5ec06d9fcd264cd4d87972eb0fba14cf, type: 2}
   animationController: {fileID: 1208116715}
 --- !u!143 &20867937
 CharacterController:
@@ -1528,6 +1529,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fa57c57381300041bf4684fc799430c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerData: {fileID: 11400000, guid: 5ec06d9fcd264cd4d87972eb0fba14cf, type: 2}
   leftHand: {fileID: 2102211153}
   rightHand: {fileID: 786548457}
 --- !u!1 &1431920237
@@ -1589,6 +1591,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 760cb8722bc0dc04f84244708db29f1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyData: {fileID: 0}
 --- !u!1 &1442225264
 GameObject:
   m_ObjectHideFlags: 0

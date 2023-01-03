@@ -9,13 +9,14 @@ namespace Player
     [RequireComponent(typeof(CharacterController))]
     public class PlayerController : MonoBehaviour
     {
+        [SerializeField] private PlayerData playerData;
+
         private CharacterController characterController;
         [SerializeField]
         private Animator animationController;
         private Transform animationTransform;
 
         #region Variables: Movement
-        private const float MOVE_SPEED = 6f;
         private Vector2 playerMovement;
         private bool isRunning;
         #endregion
@@ -98,7 +99,7 @@ namespace Player
 
                 animationTransform.rotation = Quaternion.LookRotation(-playerMovementToVector3, Vector3.up); //Forward is reversed because of how the animation was built
 
-                characterController.Move(playerMovementToVector3 * MOVE_SPEED * Time.deltaTime);
+                characterController.Move(playerMovementToVector3 * playerData.moveSpeed * Time.deltaTime);
             }
             else if(isRunning != false) //Disable Running state if needed
             {
