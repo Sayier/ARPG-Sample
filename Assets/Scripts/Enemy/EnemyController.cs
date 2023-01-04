@@ -22,17 +22,19 @@ namespace Enemy
 
         #region Variables: FSM
         private EnemyState currentState;
-        private Transform moveTarget;
+        private Transform target;
         private Vector3 startPosition;
         #endregion
 
         #region Variables: General
         private float currentHealthPoints;
+        private float attackDelay;
         #endregion
 
         #region Variables: Animation
         [SerializeField] private Animator animationController;
         private int animationRunningParameterHash;
+        private int animationAttackingParameterHash;
         #endregion
 
         private NavMeshAgent navAgent;
@@ -48,17 +50,24 @@ namespace Enemy
             currentState = EnemyState.Idle;
 
             animationRunningParameterHash = Animator.StringToHash("Running");
+            animationAttackingParameterHash = Animator.StringToHash("Attacking");
         }
 
         public void Update()
         {
+            //Debug.Log(currentState.ToString());
+
             if (currentState == EnemyState.Move)
             {
                 Move();
             }
-            if (currentState == EnemyState.Return)
+            else if (currentState == EnemyState.Return)
             {
                 Return();
+            }
+            else if (currentState == EnemyState.Attack)
+            {
+                Attack();
             }
         }
 
@@ -66,9 +75,9 @@ namespace Enemy
         {
             if (other.CompareTag("Player"))
             {
-                moveTarget = other.transform;
-                navAgent.destination = moveTarget.position;
-                transform.rotation = Quaternion.LookRotation(moveTarget.position - transform.position, Vector3.up);
+                target = other.transform;
+                navAgent.destination = target.position;
+                transform.rotation = Quaternion.LookRotation(target.position - transform.position, Vector3.up);
 
                 currentState = EnemyState.Move;
 
@@ -80,7 +89,7 @@ namespace Enemy
         {
             if (other.CompareTag("Player"))
             {
-                moveTarget = null;
+                target = null;
                 navAgent.destination = startPosition;
                 navAgent.velocity = Vector3.zero;
                 transform.rotation = Quaternion.LookRotation(startPosition - transform.position, Vector3.up);
@@ -100,7 +109,8 @@ namespace Enemy
             }
             else
             {
-                navAgent.destination = moveTarget.position;
+                animationController.SetBool(animationRunningParameterHash, true);
+                navAgent.destination = target.position;
             }
         }
 
@@ -110,7 +120,32 @@ namespace Enemy
             {
                 currentState = EnemyState.Idle;
                 StopMovement();
-                moveTarget = null;
+                target = null;
+            }
+        }
+
+        private void Attack()
+        {
+            if ((target.position - transform.position).magnitude > enemyData.attackRange)
+            {
+                currentState = EnemyState.Move;
+                animationController.ResetTrigger(animationAttackingParameterHash);
+                navAgent.destination = target.position;
+                return;
+            }
+
+            transform.rotation = Quaternion.LookRotation(target.position - transform.position, Vector3.up);
+
+            if(attackDelay >= enemyData.attackRate)
+            {
+                //Do the attack
+                animationController.SetTrigger(animationAttackingParameterHash);
+
+                attackDelay = 0;
+            }
+            else
+            {
+                attackDelay += Time.deltaTime;
             }
         }
 

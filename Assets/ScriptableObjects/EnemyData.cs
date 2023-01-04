@@ -8,8 +8,12 @@ namespace Enemy
     public class EnemyData : ScriptableObject
     {
         public float healthPoints;
-        public float fovRadius;
         public float moveSpeed;
+
+        public float fovRadius;
+        
         public float attackRange;
+        public float attackRate;
+        public float attackDamage;
     }
 }
