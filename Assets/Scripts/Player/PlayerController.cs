@@ -135,30 +135,16 @@ namespace Player
                 animationController.SetBool(animationRunningParameterHash, false);
                 animationController.SetInteger(animationAttackComboParameterHash, currentComboStep);
 
-                comboAttackResetCoroutine = StartCoroutine(ResettingAttackCombo());
+                comboAttackResetCoroutine = StartCoroutine(Tools.Util.WaitingForCurrentAnimation(
+                    animationController,
+                    () =>
+                    {
+                        currentComboStep = 0;
+                        animationController.SetInteger(animationAttackComboParameterHash, currentComboStep);
+                        isAttacking = false;
+                    },
+                    stopAfterAnim: true));
             }
-        }
-
-        private IEnumerator ResettingAttackCombo()
-        {
-
-            yield return new WaitForEndOfFrame();
-            yield return new WaitForSeconds(animationController.GetAnimatorTransitionInfo(0).duration);
-            yield return new WaitForEndOfFrame();
-            yield return new WaitUntil(() => animationController.GetAnimatorTransitionInfo(0).normalizedTime >= 0.9f);
-
-            currentComboStep = 0;
-            //Debug.Log("Combo set to 0");
-
-            animationController.SetInteger(animationAttackComboParameterHash, currentComboStep);
-            
-            playerMovement = moveAction.ReadValue<Vector2>();
-            if (playerMovement.sqrMagnitude > 0.01f && isRunning)
-            {
-                animationController.SetBool(animationRunningParameterHash, true);
-            }
-            
-            isAttacking = false;
         }
     }
 }

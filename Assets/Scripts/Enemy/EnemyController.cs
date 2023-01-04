@@ -35,15 +35,19 @@ namespace Enemy
         [SerializeField] private Animator animationController;
         private int animationRunningParameterHash;
         private int animationAttackingParameterHash;
+        private int animationTakeHitParameterHash;
         #endregion
 
         private NavMeshAgent navAgent;
+        private bool canAttack;
+        private Coroutine attackCoroutine;
 
         public void Awake()
         {
             GetComponent<SphereCollider>().radius = enemyData.fovRadius;
             navAgent = GetComponent<NavMeshAgent>();
             currentHealthPoints = enemyData.healthPoints;
+            attackCoroutine = null;
 
             startPosition = transform.position;
 
@@ -51,6 +55,7 @@ namespace Enemy
 
             animationRunningParameterHash = Animator.StringToHash("Running");
             animationAttackingParameterHash = Animator.StringToHash("Attacking");
+            animationTakeHitParameterHash = Animator.StringToHash("TakeHit");
         }
 
         public void Update()
@@ -102,9 +107,10 @@ namespace Enemy
 
         private void Move()
         {
-            if (navAgent.remainingDistance < enemyData.attackRange)
+            if (navAgent.remainingDistance <= enemyData.attackRange)
             {
                 StopMovement();
+                canAttack = true;
                 currentState = EnemyState.Attack;
             }
             else
@@ -116,7 +122,7 @@ namespace Enemy
 
         public void Return()
         {
-            if(navAgent.remainingDistance < 0.1f)
+            if (navAgent.remainingDistance < 0.1f)
             {
                 currentState = EnemyState.Idle;
                 StopMovement();
@@ -126,11 +132,20 @@ namespace Enemy
 
         private void Attack()
         {
+            if (canAttack != true)
+            {
+                return;
+            }
+
             if ((target.position - transform.position).magnitude > enemyData.attackRange)
             {
                 currentState = EnemyState.Move;
-                animationController.ResetTrigger(animationAttackingParameterHash);
                 navAgent.destination = target.position;
+                animationController.ResetTrigger(animationAttackingParameterHash);
+                if(attackCoroutine == null)
+                {
+                    navAgent.isStopped = false;
+                }
                 return;
             }
 
@@ -138,10 +153,15 @@ namespace Enemy
 
             if(attackDelay >= enemyData.attackRate)
             {
-                //Do the attack
+                navAgent.isStopped = true;
                 animationController.SetTrigger(animationAttackingParameterHash);
-
                 attackDelay = 0;
+
+                StartCoroutine(Tools.Util.WaitingForCurrentAnimation(animationController, () => 
+                    {
+                        navAgent.isStopped = false;
+                        attackCoroutine = null;
+                    }));
             }
             else
             {
@@ -153,11 +173,27 @@ namespace Enemy
         {
             currentHealthPoints -= damageAmount;
 
-            Debug.Log("Enemy Hit");
-
             if(currentHealthPoints <= 0)
             {
                 Destroy(gameObject);
+            }
+            else
+            {
+                animationController.SetTrigger(animationTakeHitParameterHash);
+                attackDelay = 0f;
+                canAttack = false;
+                if(attackCoroutine != null)
+                {
+                    StopCoroutine(attackCoroutine);
+                    attackCoroutine = null;
+                    navAgent.isStopped = false;
+                }
+                StartCoroutine(Tools.Util.WaitingForCurrentAnimation(
+                    animationController,
+                    () =>
+                    {
+                        canAttack = true;
+                    }));
             }
         }
 

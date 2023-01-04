@@ -31,9 +31,10 @@ namespace Player
 
             foreach(Collider enemy in closeEnemies)
             {
-                Enemy.EnemyController closeEnemy = enemy.GetComponent<Enemy.EnemyController>();
+                Enemy.EnemyController closeEnemy = enemy.transform.parent.GetComponent<Enemy.EnemyController>();
                 if (closeEnemy != null)
                 {
+                    Debug.Log("Enemy was attacked");
                     closeEnemy.TakeDamage(playerData.attackDamage);
                 }
             }
