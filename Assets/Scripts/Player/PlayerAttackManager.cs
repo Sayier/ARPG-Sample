@@ -27,6 +27,8 @@ namespace Player
         {
             Collider[] closeEnemies = Physics.OverlapSphere(hand.position, playerData.attackRange, ENEMY_LAYER);
 
+            Debug.Log(closeEnemies.Length.ToString());
+
             foreach(Collider enemy in closeEnemies)
             {
                 Enemy.EnemyController closeEnemy = enemy.GetComponent<Enemy.EnemyController>();

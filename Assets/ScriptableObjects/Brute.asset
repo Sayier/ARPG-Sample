@@ -13,3 +13,6 @@ MonoBehaviour:
   m_Name: Brute
   m_EditorClassIdentifier: 
   healthPoints: 6
+  fovRadius: 5
+  moveSpeed: 5
+  attackRange: 0.25
