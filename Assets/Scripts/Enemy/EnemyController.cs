@@ -30,6 +30,11 @@ namespace Enemy
         private float currentHealthPoints;
         #endregion
 
+        #region Variables: Animation
+        [SerializeField] private Animator animationController;
+        private int animationRunningParameterHash;
+        #endregion
+
         private NavMeshAgent navAgent;
 
         public void Awake()
@@ -41,6 +46,8 @@ namespace Enemy
             startPosition = transform.position;
 
             currentState = EnemyState.Idle;
+
+            animationRunningParameterHash = Animator.StringToHash("Running");
         }
 
         public void Update()
@@ -64,6 +71,8 @@ namespace Enemy
                 transform.rotation = Quaternion.LookRotation(moveTarget.position - transform.position, Vector3.up);
 
                 currentState = EnemyState.Move;
+
+                animationController.SetBool(animationRunningParameterHash, true);
             }
         }
 
@@ -77,6 +86,8 @@ namespace Enemy
                 transform.rotation = Quaternion.LookRotation(startPosition - transform.position, Vector3.up);
 
                 currentState = EnemyState.Return;
+
+                animationController.SetBool(animationRunningParameterHash, true);
             }
         }
 
@@ -119,6 +130,7 @@ namespace Enemy
         {
             navAgent.destination = transform.position;
             navAgent.velocity = Vector3.zero;
+            animationController.SetBool(animationRunningParameterHash, false);
         }
     }
 }

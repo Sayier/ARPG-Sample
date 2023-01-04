@@ -12,9 +12,7 @@ namespace Player
         [SerializeField] private PlayerData playerData;
 
         private CharacterController characterController;
-        [SerializeField]
-        private Animator animationController;
-        private Transform animationTransform;
+        
 
         #region Variables: Movement
         private Vector2 playerMovement;
@@ -38,6 +36,8 @@ namespace Player
         #region Variables: Animation
         private int animationRunningParameterHash;
         private int animationAttackComboParameterHash;
+        [SerializeField] private Animator animationController;
+        private Transform animationTransform;
         #endregion
 
         void Awake()
