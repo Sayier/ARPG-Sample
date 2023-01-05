@@ -144,7 +144,7 @@ namespace Enemy
                 animationController.ResetTrigger(animationAttackingParameterHash);
                 if(attackCoroutine == null)
                 {
-                    navAgent.isStopped = false;
+                    navAgent.isStopped = true;
                 }
                 return;
             }
@@ -157,7 +157,8 @@ namespace Enemy
                 animationController.SetTrigger(animationAttackingParameterHash);
                 attackDelay = 0;
 
-                StartCoroutine(Tools.Util.WaitingForCurrentAnimation(animationController, () => 
+                attackCoroutine = StartCoroutine(Tools.Util.WaitingForCurrentAnimation(
+                    animationController, () => 
                     {
                         navAgent.isStopped = false;
                         attackCoroutine = null;
