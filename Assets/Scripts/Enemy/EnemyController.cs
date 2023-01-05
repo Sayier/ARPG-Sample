@@ -177,6 +177,10 @@ namespace Enemy
         {
             currentHealthPoints -= damageAmount;
 
+            float height = modelCollider.bounds.extents.y / 2f;
+            Vector3 popupPosition = transform.position + transform.up * height;
+            Tools.Graphics.CreateDamagePopups(damageAmount, popupPosition);
+
             if(currentHealthPoints <= 0)
             {
                 currentState = EnemyState.Die;
