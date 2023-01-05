@@ -1088,6 +1088,12 @@ Animator:
     type: 3}
   m_PrefabInstance: {fileID: 8254699538800605181}
   m_PrefabAsset: {fileID: 0}
+--- !u!65 &7167786310523405220 stripped
+BoxCollider:
+  m_CorrespondingSourceObject: {fileID: 3159902597896096495, guid: ac135138884d48f41a9c41b9975f4842,
+    type: 3}
+  m_PrefabInstance: {fileID: 8254699538800605181}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8254699538800605181
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1125,6 +1131,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 180
       objectReference: {fileID: 0}
+    - target: {fileID: 8254699538042005901, guid: ac135138884d48f41a9c41b9975f4842,
+        type: 3}
+      propertyPath: modelCollider
+      value: 
+      objectReference: {fileID: 7167786310523405220}
     - target: {fileID: 8254699538042005901, guid: ac135138884d48f41a9c41b9975f4842,
         type: 3}
       propertyPath: animationController

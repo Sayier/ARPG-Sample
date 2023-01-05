@@ -10,6 +10,7 @@ namespace Enemy
     public class EnemyController : MonoBehaviour
     {
         [SerializeField] private EnemyData enemyData;
+        [SerializeField] private Collider modelCollider;
 
         private enum EnemyState
         {
@@ -36,6 +37,7 @@ namespace Enemy
         private int animationRunningParameterHash;
         private int animationAttackingParameterHash;
         private int animationTakeHitParameterHash;
+        private int animationDieParameterHash;
         #endregion
 
         private NavMeshAgent navAgent;
@@ -56,6 +58,7 @@ namespace Enemy
             animationRunningParameterHash = Animator.StringToHash("Running");
             animationAttackingParameterHash = Animator.StringToHash("Attacking");
             animationTakeHitParameterHash = Animator.StringToHash("TakeHit");
+            animationDieParameterHash = Animator.StringToHash("Die");
         }
 
         public void Update()
@@ -144,7 +147,7 @@ namespace Enemy
                 animationController.ResetTrigger(animationAttackingParameterHash);
                 if(attackCoroutine == null)
                 {
-                    navAgent.isStopped = true;
+                    navAgent.isStopped = false;
                 }
                 return;
             }
@@ -176,7 +179,17 @@ namespace Enemy
 
             if(currentHealthPoints <= 0)
             {
-                Destroy(gameObject);
+                currentState = EnemyState.Die;
+                modelCollider.enabled = false;
+                animationController.SetTrigger(animationDieParameterHash);
+                StartCoroutine(Tools.Util.WaitingForCurrentAnimation(
+                    animationController,
+                    () =>
+                    {
+                        Destroy(gameObject);
+                    },
+                    waitForAnimName: "Death",
+                    extraWait: 1f));
             }
             else
             {
@@ -194,7 +207,8 @@ namespace Enemy
                     () =>
                     {
                         canAttack = true;
-                    }));
+                    },
+                    waitForAnimName: "StandingReactHit"));
             }
         }
 
