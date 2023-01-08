@@ -21,6 +21,10 @@ MonoBehaviour:
     m_Address: Assets/Prefabs/Damage Text.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 5ec06d9fcd264cd4d87972eb0fba14cf
+    m_Address: Assets/ScriptableObjects/Player.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 1fa8d6f547c09904190c9b2a49382763, type: 2}
   m_SchemaSet:
