@@ -56,5 +56,9 @@ sysinfo.txt
 *.unitypackage
 
 # Crashlytics generated file
+<<<<<<< HEAD
 crashlytics-build.properties
 
+=======
+crashlytics-build.properties
+>>>>>>> 2ad5a17 (Initial commit of mostly empty project)
