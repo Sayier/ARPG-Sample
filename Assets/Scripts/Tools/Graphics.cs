@@ -53,6 +53,9 @@ namespace Tools
                         (Color color) => { TMPComponent.color = color; },
                         0f,
                         DAMAGE_POPUP_TIME);
+
+                    await System.Threading.Tasks.Task.Delay((int)(DAMAGE_POPUP_TIME * 1000 + 100));
+                    Addressables.ReleaseInstance(damageTextObject);
                 };
         }
     }
